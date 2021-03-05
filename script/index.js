@@ -1,6 +1,10 @@
 let myChart = document.querySelector('#myChart').getContext('2d');
 const asia=document.querySelector("#asia");
 const africa=document.querySelector("#africa");
+const confirmed=document.querySelector("#confirmed");
+myChart.canvas.parentNode.style.width = "90vw";
+myChart.canvas.parentNode.style.height = "500px";
+
 
 const countriesApi = 'https://restcountries.herokuapp.com/api/v1';
 const proxy = 'https://api.allorigins.win/raw?url';
@@ -12,16 +16,21 @@ getChart();
 async function fetchCountriesApi(){
     const response = await fetch(`${proxy}=${countriesApi}`);
     let countriesData = await response.json ();
+    const continents = countriesData.map(country => country.region)
+    const uniqueContintinents = Array.from(new Set(continents))
+
     return countriesData;
 }
 
-// async function fetchCovidApi(){
-//     const callApi = await fetch(covidApi);
-//     let covidData= await callApi.json();
-//     return covidData; 
-// }
+async function fetchCovidApi(){
+    const callApi = await fetch(covidApi);
+    let covidData= await callApi.json();
+    // console.log(covidData.data);
+    return covidData.data; 
+}
+fetchCovidApi();
 
-function mapCountryItem(countryItem){
+function mapCountryData(countryItem){
     return{
         name:countryItem.name.common,
         code:countryItem.cca2,
@@ -30,26 +39,56 @@ function mapCountryItem(countryItem){
 }
 
 async function createCountryArr(){
-    let countryArr=(await fetchCountriesApi()).map((x)=>(mapCountryItem(x)));;
-    // console.log("countryArr",countryArr); 
+    let countryArr=(await fetchCountriesApi()).map((x)=>(mapCountryData(x)));;
     return countryArr;  
 }
+
+function mapCovidData(item){
+    return{
+        name: item.name,
+        code:item.code,
+        confirmed:item.latest_data.confirmed,
+        critical: item.latest_data.critical,
+        deaths: item.latest_data.deaths,
+        recovered: item.latest_data.recovered
+    }
+}
+
+async function createCovidArr(){
+    let covidArr=(await fetchCovidApi()).map((x)=>(mapCovidData(x)));;
+    return covidArr;  
+}
+
 
 
 async function createRegionArr(region){
     let regionArr=(await createCountryArr());
     let arr=[];
     regionArr.forEach((x)=>{
-        console.log(x.region)
         if(x.region==region){  
            arr.push(x.name) ;
         }
     })
-    console.log(arr);
     return arr;
 }
 
-
+async function info (str,key){
+    let covid=await createCovidArr();
+    let covidKey=covid.map((x)=>{return x[key]});
+    console.log("covidKey",covidKey);
+    let region=await createRegionArr(str);
+    let infoArr=[];
+    console.log(covid);
+    console.log(region);
+    for(let i=0 ; i<region.length ; i++){
+        for(let j=0; j<covid.length ; j++){
+            if(region[i]==covid[j].name){
+                infoArr[i]=covidKey[j];
+            }
+        }
+    }
+    return infoArr;
+}
 
 
 
@@ -85,32 +124,17 @@ let chart = new Chart(myChart, {
 
 
 
-function addData(chart, label) {
-    chart.data.label='hello'
-  
-    chart.update();
-}
-
-// function removeData(chart) {
-//     chart.data.labels.pop();
-//     chart.data.datasets.forEach((dataset) => {
-//         dataset.data.pop();
-//     });
-//     chart.update();
-// }
-
-
-
 asia.addEventListener('click',async ()=>{
     xlabels=await createRegionArr('Asia');
-    ytamps=[1000,2000,3000,4000,5000];
+    ytamps=await info('Asia','confirmed');
+    // let x=e.terget;
     getChart();
     
 })
 
 africa.addEventListener('click',async ()=>{
     xlabels=await createRegionArr('Africa');
-    ytamps=[1000,2000,3000,4000,5000,6000,7000,8000,9000,10000,11000,12000,13000,14000,15000];
+    ytamps=await info('Africa','confirmed');
     getChart();
     
 })
