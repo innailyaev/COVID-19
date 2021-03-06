@@ -3,6 +3,9 @@ let chartContainer=document.querySelector('.chartContainer');
 let myChart = document.querySelector('#myChart').getContext('2d');
 myChart.canvas.parentNode.style.width = "90vw";
 myChart.canvas.parentNode.style.height = "90vh";
+Chart.defaults.global.defaultFontColor='black';
+Chart.defaults.global.defaultFontSize='18';
+Chart.defaults.global.defaultFontFamily='Ariel';
 
 const continentsBtn=document.querySelector("#continentsButtons");
 const infoButtons=document.querySelector("#infoButtons");
@@ -11,21 +14,20 @@ const popUpBox = document.getElementById("myPopUpBox");
 const span = document.getElementsByClassName("close")[0];
 const innerBox=document.querySelector('.innerBox');
 
-
-
 const countriesApi = 'https://restcountries.herokuapp.com/api/v1';
-// const proxy = 'https://api.allorigins.win/raw?url';
 const proxy = 'https://api.codetabs.com/v1/proxy/?quest';
 const covidApi =' https://corona-api.com/countries';
+let chart;
 let xLabels=[];
 let yLabels=[];
 let continent;
 let label='';
+let divTarget;
 getChart();
 
 // CHART.JS
 async function getChart(){
-    let chart = new Chart(myChart, {
+    chart = new Chart(myChart, {
         // The type of chart we want to create
         type: 'line',
     
@@ -34,8 +36,8 @@ async function getChart(){
             labels: xLabels,
             datasets: [{
                 label: label,
-                backgroundColor: 'rgb(255, 99, 132)',
-                borderColor: 'rgb(255, 99, 132)',
+                backgroundColor: 'rgb(138, 188, 226)',
+                borderColor: 'rgb(100, 170, 223)',
                 data: yLabels
             }]
         },
@@ -47,9 +49,13 @@ async function getChart(){
                 text:'Covid 19',
                 fontSize:50,
                 fontColor:'#000'
-            }
+            },
+            legend: {
+                labels: {
+                    fontSize:18,
+                }
+            },   
         }
-        
     });
 }
 
@@ -100,7 +106,6 @@ async function createCovidArr(){
     return covidArr;  
 }
 
-
 async function createRegionArr(region){
     let regionArr=(await createCountryArr());
     let arr=[];
@@ -109,7 +114,6 @@ async function createRegionArr(region){
            arr.push(x.name) ;
         }
     })
-    console.log("regionArr",arr);
     return arr;
 }
 
@@ -117,7 +121,6 @@ async function createRegionArr(region){
 async function info (regionArr,key){
     let covid=await createCovidArr();
     let covidKey=covid.map((x)=>{return x[key]});
-    console.log('covidKey',covidKey)
     let infoArr=[];
     for(let i=0 ; i<regionArr.length ; i++){
         for(let j=0; j<covid.length ; j++){
@@ -155,177 +158,123 @@ async function showInfoByCountry(value){
         <li class=list>Total recovered <br> ${arr[0].recovered}</li>
         <li class=list>Critical <br> ${arr[0].critical}</li>
     </ul>`
-
     mainDiv.innerHTML=ul;
-    console.log(arr);
-    console.log("todeyDeaths",arr[0].todeyDeaths);
-    console.log("todayConfirmed",arr[0].todayConfirmed);
-    console.log("critical",arr[0].critical);
-    console.log("recovered",arr[0].recovered);
-    console.log("deates",arr[0].deaths);
-    console.log("total deates:",totalDeates);
-    console.log("total cases:",totalDeates+arr[0].critical+arr[0].recovered);
-
 }
+
+async function update(continentStr, infoStr,labelStr){
+    chart.destroy();
+    btnStyle();
+    xLabels=await createRegionArr(continentStr);
+    yLabels=await info(xLabels,infoStr);
+    label=labelStr;
+    select.innerHTML='';
+    changeSelectOptions(xLabels);
+    getChart();
+}
+
 
 //Event listeners
 continentsBtn.addEventListener('click',async (e)=>{
     continent=e.target.getAttribute("id");
+    divTarget=e.target;
+    console.log(divTarget);
     console.log(e.target.getAttribute("id"));
     switch(continent){
         case('asia'):
-            xLabels=await createRegionArr('Asia');
-            yLabels=await info(xLabels,'confirmed');
-            label='covid 19 confirmed';
-            select.innerHTML='';
-            changeSelectOptions(xLabels);
-            getChart();
+            update('Asia','confirmed','covid 19 confirmed');
             break;
         case('europe'):
-            xLabels=await createRegionArr('Europe');
-            yLabels=await info(xLabels,'confirmed');
-            label='covid 19 confirmed';
-            select.innerHTML='';
-            changeSelectOptions(xLabels);
-            getChart();
+            update('Europe','confirmed','covid 19 confirmed');
             break;
         case('africa'):
-            xLabels=await createRegionArr('Africa');
-            yLabels=await info(xLabels,'confirmed');
-            label='covid 19 confirmed';
-            select.innerHTML='';
-            changeSelectOptions(xLabels);
-            getChart();
+            update('Africa','confirmed','covid 19 confirmed');
             break;
         case('americas'):
-            xLabels=await createRegionArr('Americas');
-            yLabels=await info(xLabels,'confirmed');
-            label='covid 19 confirmed';
-            select.innerHTML='';
-            changeSelectOptions(xLabels);
-            getChart();
+            update('Americas','confirmed','covid 19 confirmed');
             break;
     }
     e.stopPropagation();
-})
+},true)
 
 infoButtons.addEventListener('click',async (e)=>{
     let infoBtn=e.target.getAttribute("id");
-    console.log(e.target.getAttribute("id"));
-    console.log(continent);
     switch(continent){
         case('asia'):
-        xLabels=await createRegionArr('Asia');
             switch(infoBtn){
                 case('confirmed'):
-                yLabels=await info(xLabels,'confirmed');
-                label='covid 19 confirmed';
-                getChart();
+                update('Asia','confirmed','covid 19 confirmed');
                 break;
 
                 case('critical'):
-                yLabels=await info(xLabels,'critical');
-                label='covid 19 critical';
-                getChart();
+                update('Asia','critical','covid 19 critical');
                 break;
 
                 case('deaths'):
-                yLabels=await info(xLabels,'deaths');
-                label='covid 19 deaths';
-                getChart();
+                update('Asia','deaths','covid 19 deaths');
                 break;
 
                 case('recovered'):
-                yLabels=await info(xLabels,'recovered');
-                label='covid 19 recovered';
-                getChart();
+                update('Asia','recovered','covid 19 recovered');
                 break;
             }
         break;
             
         case('europe'):
-        xLabels=await createRegionArr('Europe');
             switch(infoBtn){
                 case('confirmed'):
-                yLabels=await info(xLabels,'confirmed');
-                label='covid 19 confirmed';
-                getChart();
+                update('Europe','confirmed','covid 19 confirmed');
                 break;
 
                 case('critical'):
-                yLabels=await info(xLabels,'critical');
-                label='covid 19 critical';
-                getChart();
+                update('Europe','critical','covid 19 critical');
                 break;
 
                 case('deaths'):
-                yLabels=await info(xLabels,'deaths');
-                label='covid 19 deaths';
-                getChart();
+                update('Europe','deaths','covid 19 deaths');
                 break;
 
                 case('recovered'):
-                yLabels=await info(xLabels,'recovered');
-                label='covid 19 recovered';
-                getChart();
+                update('Europe','recovered','covid 19 recovered');
                 break;
             }
             break;
         case('africa'): 
-        xLabels=await createRegionArr('Africa');
-        switch(infoBtn){
-            case('confirmed'):
-            yLabels=await info(xLabels,'confirmed');
-            label='covid 19 confirmed';
-            getChart();
-            break;
+                switch(infoBtn){
+                case('confirmed'):
+                update('Africa','confirmed','covid 19 confirmed');
+                break;
 
-            case('critical'):
-            yLabels=await info(xLabels,'critical');
-            label='covid 19 critical';
-            getChart();
-            break;
+                case('critical'):
+                update('Africa','critical','covid 19 critical');
+                break;
 
-            case('deaths'):
-            yLabels=await info(xLabels,'deaths');
-            label='covid 19 deaths';
-            getChart();
-            break;
+                case('deaths'):
+                update('Africa','deaths','covid 19 deaths');
+                break;
 
-            case('recovered'):
-            yLabels=await info(xLabels,'recovered');
-            label='covid 19 recovered';
-            getChart();
-            break;
-        }
+                case('recovered'):
+                update('Africa','recovered','covid 19 recovered');
+                break;
+            }
         break;
         case('americas'):
-        xLabels=await createRegionArr('Americas');
-        switch(infoBtn){
-            case('confirmed'):
-            yLabels=await info(xLabels,'confirmed');
-            label='covid 19 confirmed';
-            getChart();
-            break;
+            switch(infoBtn){
+                case('confirmed'):
+                update('Americas','confirmed','covid 19 confirmed');
+                break;
 
-            case('critical'):
-            yLabels=await info(xLabels,'critical');
-            label='covid 19 critical';
-            getChart();
-            break;
+                case('critical'):
+                update('Americas','critical','covid 19 critical');
+                break;
 
-            case('deaths'):
-            yLabels=await info(xLabels,'deaths');
-            label='covid 19 deaths';
-            getChart();
-            break;
+                case('deaths'):
+                update('Americas','deaths','covid 19 deaths');
+                break;
 
-            case('recovered'):
-            yLabels=await info(xLabels,'recovered');
-            label='covid 19 recovered';
-            getChart();
-            break;
-        }
+                case('recovered'):
+                update('Americas','recovered','covid 19 recovered');
+                break;
+            }
         break;
     }
 
@@ -349,3 +298,29 @@ document.addEventListener('click',(e)=>{
         popUpBox.style.display = "none";
 
 })
+
+function btnStyle(){
+    divTarget.classList.add("mystyle");
+    switch(continent){
+        case('asia'):
+            document.getElementById('europe').classList.remove("mystyle");
+            document.getElementById('africa').classList.remove("mystyle");
+            document.getElementById('americas').classList.remove("mystyle");
+            break;
+        case('europe'):
+            document.getElementById('asia').classList.remove("mystyle");
+            document.getElementById('africa').classList.remove("mystyle");
+            document.getElementById('americas').classList.remove("mystyle");
+            break;
+        case('africa'):
+            document.getElementById('asia').classList.remove("mystyle");
+            document.getElementById('europe').classList.remove("mystyle");
+            document.getElementById('americas').classList.remove("mystyle");
+            break;
+        case('americas'):
+            document.getElementById('asia').classList.remove("mystyle");
+            document.getElementById('africa').classList.remove("mystyle");
+            document.getElementById('europe').classList.remove("mystyle");
+            break;
+    }   
+}

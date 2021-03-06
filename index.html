@@ -12,33 +12,40 @@
 </head>
 
 <body>
-    <div class="chartContainer" style="position: relative;">
-        <canvas id="myChart"></canvas>
+   
+        <div class="chartContainer" style="position: relative;">
+            <canvas id="myChart"></canvas>
+       
     </div>
-    <div id="infoButtons">
-        <button class="btn" id="confirmed">Confirmed</button>
-        <button class="btn" id="critical">Critical</button>
-        <button class="btn" id="deaths">Deaths</button>
-        <button class="btn" id="recovered">Recovered</button>
+    <div class="firstRow">
+        <div id="infoButtons">
+            <button class="btn" id="confirmed">Confirmed</button>
+            <button class="btn" id="critical">Critical</button>
+            <button class="btn" id="deaths">Deaths</button>
+            <button class="btn" id="recovered">Recovered</button>
+        </div>
     </div>
-    <div id="continentsButtons">
-        <button class="btn" id="asia">Asia</button>
-        <button class="btn" id="europe">Europe</button>
-        <button class="btn" id="africa">Africa</button>
-        <button class="btn" id="americas">Americas</button>
-        <button class="btn" id="world">World</button>
+    <div class="secondRow">
+        <div id="continentsButtons">
+            <button class="btn" id="asia">Asia</button>
+            <button class="btn" id="europe">Europe</button>
+            <button class="btn" id="africa">Africa</button>
+            <button class="btn" id="americas">Americas</button>
+            <button class="btn" id="world">World</button>
+        </div>
     </div>
-    <select name="countries" id="countries"></select>
-    
+    <div class="thiredRow">
+        <select name="countries" id="countries"></select>
+    </div>
     <div id="myPopUpBox" class="PopUp">
 
         <!-- Modal content -->
         <div class="PopUpContent">
-          <span class="close">&times;</span>
-          <div class='mainDiv'></div>
+            <span class="close">&times;</span>
+            <div class='mainDiv'></div>
         </div>
-      
-      </div>
+
+    </div>
     <script src="/script/index.js"></script>
 </body>
 

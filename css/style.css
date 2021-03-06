@@ -9,38 +9,71 @@ body{
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-evenly;
-    /* background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTCHZv7Xl5rEnUCuy6W_obtFurdzuRd3qkNJA&usqp=CAU'); */
+    background-image: url(/image/corona.png);
     background-repeat: no-repeat;
     background-size: cover;
+    
 }
-
-.chartContainer{
-    border: solid black;
-    background-color: white;
-}
-
 
 .btn{
     width: 100px;
     height: 50px;
     cursor: pointer;
+    border-radius: 10px;
+    outline: none;
+    border: thin grey;
+    border-width: thin;
+
+}
+.btn:hover{
+    background-color: #bae1ff;
+}
+
+.mystyle{
+    background-color: rgb(130, 213, 238);
 }
 
 #continentsButtons{
-    border: solid red;
     z-index: 1;
 }
 
 #infoButtons{
-    border: solid rebeccapurple;
     z-index: 1;
-
 }
 
 #countries{
-    height: 40px;
+    height: 50px;
     width: 250px;
     z-index: 1;
+    border-radius: 10px;
+    outline: none;
+
+}
+
+.firstRow{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 80px;
+    background-color: #8abce2;
+}
+
+.secondRow{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 80px;
+    background-color: #64aadf;
+}
+
+.thiredRow{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 80px;
+    background-color: #4d9fdf;
 
 }
