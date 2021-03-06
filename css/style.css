@@ -4,22 +4,20 @@
     box-sizing: border-box;
 }
 
-.chartContainer{
-    position: relative; 
-    height:90vh; 
-    width:80vw;
-    border: solid black;
-    background-color: white;
-}
-
 body{
-    height: 100vh;
+    height: 120vh;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: space-evenly;
     /* background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTCHZv7Xl5rEnUCuy6W_obtFurdzuRd3qkNJA&usqp=CAU'); */
     background-repeat: no-repeat;
     background-size: cover;
+}
+
+.chartContainer{
+    border: solid black;
+    background-color: white;
 }
 
 
@@ -27,4 +25,22 @@ body{
     width: 100px;
     height: 50px;
     cursor: pointer;
+}
+
+#continentsButtons{
+    border: solid red;
+    z-index: 1;
+}
+
+#infoButtons{
+    border: solid rebeccapurple;
+    z-index: 1;
+
+}
+
+#countries{
+    height: 40px;
+    width: 250px;
+    z-index: 1;
+
 }
