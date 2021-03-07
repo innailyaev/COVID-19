@@ -5,19 +5,20 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/normalize.css">
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/popUpBox.css">
+    <link rel="stylesheet" href="/css/loader.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <title>COVID-19</title>
 </head>
 
 <body>
-   
-        <div class="chartContainer" style="position: relative;">
-            <canvas id="myChart"></canvas>
-       
+    <div id="loader"></div>
+    <div class="chartContainer">
+        <canvas id="myChart"></canvas>
     </div>
-    <div class="firstRow">
+    <div class="firstRow row">
         <div id="infoButtons">
             <button class="btn" id="confirmed">Confirmed</button>
             <button class="btn" id="critical">Critical</button>
@@ -25,21 +26,20 @@
             <button class="btn" id="recovered">Recovered</button>
         </div>
     </div>
-    <div class="secondRow">
+    <div class="secondRow row">
         <div id="continentsButtons">
             <button class="btn" id="asia">Asia</button>
             <button class="btn" id="europe">Europe</button>
             <button class="btn" id="africa">Africa</button>
             <button class="btn" id="americas">Americas</button>
-            <button class="btn" id="world">World</button>
         </div>
     </div>
-    <div class="thiredRow">
+    <div class="thiredRow row">
         <select name="countries" id="countries"></select>
     </div>
     <div id="myPopUpBox" class="PopUp">
 
-        <!-- Modal content -->
+        <!-- popUpBox content -->
         <div class="PopUpContent">
             <span class="close">&times;</span>
             <div class='mainDiv'></div>

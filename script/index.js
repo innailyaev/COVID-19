@@ -13,6 +13,7 @@ const select= document.querySelector('#countries')
 const popUpBox = document.getElementById("myPopUpBox");
 const span = document.getElementsByClassName("close")[0];
 const innerBox=document.querySelector('.innerBox');
+let loader=document.querySelector('#loader');
 
 const countriesApi = 'https://restcountries.herokuapp.com/api/v1';
 const proxy = 'https://api.codetabs.com/v1/proxy/?quest';
@@ -61,11 +62,12 @@ async function getChart(){
 
 //functions
 async function fetchCountriesApi(){
+    loader.style.display='block';
     const response = await fetch(`${proxy}=${countriesApi}`);
     let countriesData = await response.json ();
     const continents = countriesData.map(country => country.region)
     const uniqueContintinents = Array.from(new Set(continents))
-
+    loader.style.display='none';
     return countriesData;
 }
 
@@ -84,7 +86,7 @@ function mapCountryData(countryItem){
 }
 
 async function createCountryArr(){
-    let countryArr=(await fetchCountriesApi()).map((x)=>(mapCountryData(x)));;
+    let countryArr=(await fetchCountriesApi()).map((x)=>(mapCountryData(x)));
     return countryArr;  
 }
 
@@ -103,6 +105,7 @@ function mapCovidData(item){
 
 async function createCovidArr(){
     let covidArr=(await fetchCovidApi()).map((x)=>(mapCovidData(x)));
+    console.log("covidArr",covidArr);
     return covidArr;  
 }
 
@@ -150,6 +153,7 @@ async function showInfoByCountry(value){
     let totalDeates=arr[0].deaths+arr[0].todeyDeaths;
     let totalCases=totalDeates+arr[0].critical+arr[0].recovered;
     const mainDiv=document.querySelector('.mainDiv');
+    let p= `<p class=text> ${arr[0].name} </p>`
     let ul=`<ul class=ulList>
         <li class=list>Total cases<br> ${totalCases}</li>
         <li class=list>New cases<br> ${arr[0].todayConfirmed}</li>
@@ -158,9 +162,11 @@ async function showInfoByCountry(value){
         <li class=list>Total recovered <br> ${arr[0].recovered}</li>
         <li class=list>Critical <br> ${arr[0].critical}</li>
     </ul>`
-    mainDiv.innerHTML=ul;
+    mainDiv.innerHTML=p;
+    mainDiv.innerHTML+=ul;
 }
 
+//upDate chart function
 async function update(continentStr, infoStr,labelStr){
     chart.destroy();
     btnStyle();
@@ -298,6 +304,7 @@ document.addEventListener('click',(e)=>{
         popUpBox.style.display = "none";
 
 })
+
 
 function btnStyle(){
     divTarget.classList.add("mystyle");
