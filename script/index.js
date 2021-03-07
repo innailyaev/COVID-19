@@ -105,7 +105,6 @@ function mapCovidData(item){
 
 async function createCovidArr(){
     let covidArr=(await fetchCovidApi()).map((x)=>(mapCovidData(x)));
-    console.log("covidArr",covidArr);
     return covidArr;  
 }
 
@@ -183,8 +182,6 @@ async function update(continentStr, infoStr,labelStr){
 continentsBtn.addEventListener('click',async (e)=>{
     continent=e.target.getAttribute("id");
     divTarget=e.target;
-    console.log(divTarget);
-    console.log(e.target.getAttribute("id"));
     switch(continent){
         case('asia'):
             update('Asia','confirmed','covid 19 confirmed');
@@ -289,7 +286,6 @@ infoButtons.addEventListener('click',async (e)=>{
 
 // Get the popUpBox
 select.addEventListener('change',()=>{
-    console.log(select.value);
     showInfoByCountry(select.value);
     popUpBox.style.display = "block";
 })
@@ -299,7 +295,6 @@ span.onclick = function() {
   }
 
 document.addEventListener('click',(e)=>{
-    console.log('window click');
     if(e.target.getAttribute("id")=='myPopUpBox')
         popUpBox.style.display = "none";
 
