@@ -6,7 +6,7 @@
 
 body{
     position: relative;
-    height: 120vh;
+    height: fit-content;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -24,8 +24,8 @@ body{
     outline: none;
     border: thin grey;
     border-width: thin;
-
 }
+
 .btn:hover{
     background-color: #bae1ff;
 }
@@ -48,7 +48,6 @@ body{
     z-index: 1;
     border-radius: 10px;
     outline: none;
-
 }
 
 .row{

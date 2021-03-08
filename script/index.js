@@ -1,8 +1,8 @@
 //variables
 let chartContainer=document.querySelector('.chartContainer');
 let myChart = document.querySelector('#myChart').getContext('2d');
-myChart.canvas.parentNode.style.width = "90vw";
-myChart.canvas.parentNode.style.height = "90vh";
+// myChart.canvas.parentNode.style.width = "90vw";
+// myChart.canvas.parentNode.style.height = "90vh";
 Chart.defaults.global.defaultFontColor='black';
 Chart.defaults.global.defaultFontSize='18';
 Chart.defaults.global.defaultFontFamily='Ariel';
@@ -18,12 +18,15 @@ let loader=document.querySelector('#loader');
 const countriesApi = 'https://restcountries.herokuapp.com/api/v1';
 const proxy = 'https://api.codetabs.com/v1/proxy/?quest';
 const covidApi =' https://corona-api.com/countries';
+let covidDataArr=[];
+let countriesDataArr=[];
 let chart;
 let xLabels=[];
 let yLabels=[];
 let continent;
 let label='';
 let divTarget;
+let uniqueContintinents;
 getChart();
 
 // CHART.JS
@@ -60,21 +63,28 @@ async function getChart(){
     });
 }
 
+//Call Data
+fetchCountriesApi();
+fetchCovidApi();
+
 //functions
 async function fetchCountriesApi(){
     loader.style.display='block';
     const response = await fetch(`${proxy}=${countriesApi}`);
     let countriesData = await response.json ();
     const continents = countriesData.map(country => country.region)
-    const uniqueContintinents = Array.from(new Set(continents))
+    countriesDataArr=countriesData;
+    uniqueContintinents = Array.from(new Set(continents));
+    uniqueContintinents.sort();
+    uniqueContintinents.pop();
+    uniqueContintinents.shift();    
     loader.style.display='none';
-    return countriesData;
 }
 
 async function fetchCovidApi(){
     const callApi = await fetch(covidApi);
     let covidData= await callApi.json();
-    return covidData.data; 
+    covidDataArr=covidData.data; 
 }
 
 function mapCountryData(countryItem){
@@ -84,9 +94,8 @@ function mapCountryData(countryItem){
         region:countryItem.region
     }
 }
-
-async function createCountryArr(){
-    let countryArr=(await fetchCountriesApi()).map((x)=>(mapCountryData(x)));
+function createCountryArr(){
+    let countryArr=countriesDataArr.map((x)=>(mapCountryData(x)));
     return countryArr;  
 }
 
@@ -103,13 +112,13 @@ function mapCovidData(item){
     }
 }
 
-async function createCovidArr(){
-    let covidArr=(await fetchCovidApi()).map((x)=>(mapCovidData(x)));
+function createCovidArr(){
+    let covidArr=covidDataArr.map((x)=>(mapCovidData(x)));
     return covidArr;  
 }
 
-async function createRegionArr(region){
-    let regionArr=(await createCountryArr());
+function createRegionArr(region){
+    let regionArr=createCountryArr();
     let arr=[];
     regionArr.forEach((x)=>{
         if(x.region==region){  
@@ -120,8 +129,8 @@ async function createRegionArr(region){
 }
 
 //function returns the specific information by the key: confirmed, critical, deaths or recovered
-async function info (regionArr,key){
-    let covid=await createCovidArr();
+function info (regionArr,key){
+    let covid=createCovidArr();
     let covidKey=covid.map((x)=>{return x[key]});
     let infoArr=[];
     for(let i=0 ; i<regionArr.length ; i++){
@@ -166,12 +175,11 @@ async function showInfoByCountry(value){
 }
 
 //upDate chart function
-async function update(continentStr, infoStr,labelStr){
+async function update(continentStr, infoStr){
     chart.destroy();
     btnStyle();
     xLabels=await createRegionArr(continentStr);
     yLabels=await info(xLabels,infoStr);
-    label=labelStr;
     select.innerHTML='';
     changeSelectOptions(xLabels);
     getChart();
@@ -182,107 +190,21 @@ async function update(continentStr, infoStr,labelStr){
 continentsBtn.addEventListener('click',async (e)=>{
     continent=e.target.getAttribute("id");
     divTarget=e.target;
-    switch(continent){
-        case('asia'):
-            update('Asia','confirmed','covid 19 confirmed');
-            break;
-        case('europe'):
-            update('Europe','confirmed','covid 19 confirmed');
-            break;
-        case('africa'):
-            update('Africa','confirmed','covid 19 confirmed');
-            break;
-        case('americas'):
-            update('Americas','confirmed','covid 19 confirmed');
-            break;
-    }
+    label='covid 19 confirmed';
+    update(continent,'confirmed');      
     e.stopPropagation();
 },true)
 
+
 infoButtons.addEventListener('click',async (e)=>{
     let infoBtn=e.target.getAttribute("id");
-    switch(continent){
-        case('asia'):
-            switch(infoBtn){
-                case('confirmed'):
-                update('Asia','confirmed','covid 19 confirmed');
-                break;
+    label=`covid 19 ${infoBtn}`;           
+    update(continent,infoBtn);
+    
+    e.stopPropagation();
 
-                case('critical'):
-                update('Asia','critical','covid 19 critical');
-                break;
+},true);
 
-                case('deaths'):
-                update('Asia','deaths','covid 19 deaths');
-                break;
-
-                case('recovered'):
-                update('Asia','recovered','covid 19 recovered');
-                break;
-            }
-        break;
-            
-        case('europe'):
-            switch(infoBtn){
-                case('confirmed'):
-                update('Europe','confirmed','covid 19 confirmed');
-                break;
-
-                case('critical'):
-                update('Europe','critical','covid 19 critical');
-                break;
-
-                case('deaths'):
-                update('Europe','deaths','covid 19 deaths');
-                break;
-
-                case('recovered'):
-                update('Europe','recovered','covid 19 recovered');
-                break;
-            }
-            break;
-        case('africa'): 
-                switch(infoBtn){
-                case('confirmed'):
-                update('Africa','confirmed','covid 19 confirmed');
-                break;
-
-                case('critical'):
-                update('Africa','critical','covid 19 critical');
-                break;
-
-                case('deaths'):
-                update('Africa','deaths','covid 19 deaths');
-                break;
-
-                case('recovered'):
-                update('Africa','recovered','covid 19 recovered');
-                break;
-            }
-        break;
-        case('americas'):
-            switch(infoBtn){
-                case('confirmed'):
-                update('Americas','confirmed','covid 19 confirmed');
-                break;
-
-                case('critical'):
-                update('Americas','critical','covid 19 critical');
-                break;
-
-                case('deaths'):
-                update('Americas','deaths','covid 19 deaths');
-                break;
-
-                case('recovered'):
-                update('Americas','recovered','covid 19 recovered');
-                break;
-            }
-        break;
-    }
-
-
-})
 
 // Get the popUpBox
 select.addEventListener('change',()=>{
@@ -297,32 +219,12 @@ span.onclick = function() {
 document.addEventListener('click',(e)=>{
     if(e.target.getAttribute("id")=='myPopUpBox')
         popUpBox.style.display = "none";
-
 })
-
 
 function btnStyle(){
     divTarget.classList.add("mystyle");
-    switch(continent){
-        case('asia'):
-            document.getElementById('europe').classList.remove("mystyle");
-            document.getElementById('africa').classList.remove("mystyle");
-            document.getElementById('americas').classList.remove("mystyle");
-            break;
-        case('europe'):
-            document.getElementById('asia').classList.remove("mystyle");
-            document.getElementById('africa').classList.remove("mystyle");
-            document.getElementById('americas').classList.remove("mystyle");
-            break;
-        case('africa'):
-            document.getElementById('asia').classList.remove("mystyle");
-            document.getElementById('europe').classList.remove("mystyle");
-            document.getElementById('americas').classList.remove("mystyle");
-            break;
-        case('americas'):
-            document.getElementById('asia').classList.remove("mystyle");
-            document.getElementById('africa').classList.remove("mystyle");
-            document.getElementById('europe').classList.remove("mystyle");
-            break;
-    }   
-}
+    uniqueContintinents.forEach((x)=>{
+      if(x!=continent){
+            document.getElementById(`${x}`).classList.remove("mystyle");
+    }  
+})}
