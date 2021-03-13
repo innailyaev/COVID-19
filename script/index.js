@@ -96,9 +96,9 @@ function mapCountryData(countryItem){
 }
 function createCountryArr(){
     let countryArr=countriesDataArr.map((x)=>(mapCountryData(x)));
+    console.log(countriesDataArr);
     return countryArr;  
 }
-
 function mapCovidData(item){
     return{
         name: item.name,
@@ -158,15 +158,15 @@ function changeSelectOptions(data){
 async function showInfoByCountry(value){
     let covid=await createCovidArr();
     let arr=covid.filter((x)=> x.name===value);
-    let totalDeates=arr[0].deaths+arr[0].todeyDeaths;
-    let totalCases=totalDeates+arr[0].critical+arr[0].recovered;
+    let totalDeaths=arr[0].deaths+arr[0].todeyDeaths;
+    let totalCases=totalDeaths+arr[0].critical+arr[0].recovered;
     const mainDiv=document.querySelector('.mainDiv');
     let p= `<p class=text> ${arr[0].name} </p>`
     let ul=`<ul class=ulList>
         <li class=list>Total cases<br> ${totalCases}</li>
         <li class=list>New cases<br> ${arr[0].todayConfirmed}</li>
-        <li class=list>Total deates <br> ${totalDeates}</li>
-        <li class=list>New deates<br>${arr[0].todeyDeaths}</li>
+        <li class=list>Total deaths <br> ${totalDeaths}</li>
+        <li class=list>New deaths<br>${arr[0].todeyDeaths}</li>
         <li class=list>Total recovered <br> ${arr[0].recovered}</li>
         <li class=list>Critical <br> ${arr[0].critical}</li>
     </ul>`
